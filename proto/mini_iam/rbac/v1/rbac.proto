@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package mini_iam.rbac.v1;
+
+option go_package = "github.com/<quang-duong-anz>/mini-iam-proto/gen/go/mini_iam/rbac/v1;rbacv1";
+
+// RbacService is the authorization decision point. api-gateway calls
+// Authorize() on (nearly) every request after JWT verification.
+service RbacService {
+  rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
+
+  rpc AssignRole(AssignRoleRequest) returns (AssignRoleResponse);
+  rpc RevokeRole(RevokeRoleRequest) returns (RevokeRoleResponse);
+}
+
+message AuthorizeRequest {
+  string user_id = 1;
+  string resource = 2; // e.g. "user:123" or "invoice:*"
+  string action = 3;   // e.g. "read", "write", "delete"
+}
+
+message AuthorizeResponse {
+  bool allow = 1;
+  string reason = 2; // optional, for debugging/audit — not for end users
+}
+
+message AssignRoleRequest {
+  string user_id = 1;
+  string role = 2;
+}
+
+message AssignRoleResponse {
+  bool success = 1;
+}
+
+message RevokeRoleRequest {
+  string user_id = 1;
+  string role = 2;
+}
+
+message RevokeRoleResponse {
+  bool success = 1;
+}

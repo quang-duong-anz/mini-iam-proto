@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package mini_iam.auth.v1;
+
+option go_package = "github.com/<quang-duong-anz>/mini-iam-proto/gen/go/mini_iam/auth/v1;authv1";
+
+import "google/protobuf/timestamp.proto";
+
+// AuthService handles authentication: issuing, refreshing, introspecting,
+// and revoking tokens. Internal, service-to-service contract.
+//
+// Note: the public JWKS endpoint (/.well-known/jwks.json) is intentionally
+// NOT part of this gRPC contract — it is served as plain HTTP/JSON per
+// RFC 7517 so that external JWT verifiers (which don't speak gRPC) can
+// consume it directly.
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (LoginResponse);
+  rpc IntrospectToken(IntrospectTokenRequest) returns (IntrospectTokenResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in_seconds = 3;
+  string token_type = 4; // "Bearer"
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message IntrospectTokenRequest {
+  string token = 1;
+}
+
+message IntrospectTokenResponse {
+  bool active = 1;
+  string subject = 2;      // user id
+  string issuer = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  repeated string scopes = 5;
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message LogoutResponse {
+  bool success = 1;
+}

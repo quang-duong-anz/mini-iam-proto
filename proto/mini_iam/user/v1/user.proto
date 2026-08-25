@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package mini_iam.user.v1;
+
+option go_package = "github.com/<quang-duong-anz>/mini-iam-proto/gen/go/mini_iam/user/v1;userv1";
+
+import "google/protobuf/timestamp.proto";
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (User);
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+
+  // Used internally by AuthService during Login to fetch credential hash.
+  rpc GetUserCredentialsByEmail(GetUserCredentialsByEmailRequest) returns (UserCredentials);
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string display_name = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message CreateUserRequest {
+  string email = 1;
+  string password = 2;
+  string display_name = 3;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message UpdatePasswordRequest {
+  string id = 1;
+  string current_password = 2;
+  string new_password = 3;
+}
+
+message UpdatePasswordResponse {
+  bool success = 1;
+}
+
+message GetUserCredentialsByEmailRequest {
+  string email = 1;
+}
+
+message UserCredentials {
+  string id = 1;
+  string email = 2;
+  string password_hash = 3;
+}

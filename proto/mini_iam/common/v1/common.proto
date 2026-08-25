@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package mini_iam.common.v1;
+
+option go_package = "github.com/<quang-duong-anz>/mini-iam-proto/gen/go/mini_iam/common/v1;commonv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Standard structured error detail, optionally attached via gRPC status details.
+message ErrorDetail {
+  string code = 1;      // machine-readable, e.g. "INVALID_CREDENTIALS"
+  string message = 2;   // human-readable
+}
+
+message AuditMeta {
+  string request_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+}
